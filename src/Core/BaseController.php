@@ -2,9 +2,12 @@
 
 namespace LandingCore\Core;
 
-class BaseController
+use CodeIgniter\Controller;
+
+class BaseController extends Controller
 {
     protected array $meta = [];
+    protected array $viewData = [];
 
     public function setMeta(string $key, string $value): void
     {

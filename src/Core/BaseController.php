@@ -3,19 +3,23 @@
 namespace LandingCore\Core;
 
 use CodeIgniter\Controller;
+use LandingCore\Services\SEOService;
 
 class BaseController extends Controller
 {
-    protected array $meta = [];
-    protected array $viewData = [];
+    protected SEOService $seo;
 
-    public function setMeta(string $key, string $value): void
+    public function initController($request, $response, $logger)
     {
-        $this->meta[$key] = $value;
+        parent::initController($request, $response, $logger);
+
+        $this->seo = new SEOService();
     }
 
-    public function getMeta(): array
+    protected function render(string $view, array $data = [])
     {
-        return $this->meta;
+        $data['seo'] = $this->seo;
+
+        return view($view, $data);
     }
 }

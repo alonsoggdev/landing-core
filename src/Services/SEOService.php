@@ -10,6 +10,7 @@ class SEOService
     protected ?string $ogImage = null;
     protected string $ogType = 'website';
     protected array $meta = [];
+    protected array $schemas = [];
 
     public function setTitle(string $title): void
     {
@@ -41,6 +42,11 @@ class SEOService
         $this->meta[$name] = $content;
     }
 
+    public function addSchema(array $schema): void
+    {
+        $this->schemas[] = $schema;
+    }
+
     protected function escape(?string $value): string
     {
         return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
@@ -53,6 +59,16 @@ class SEOService
         $canonical = $this->canonical ? $this->escape($this->canonical) : '';
         $ogImage = $this->ogImage ? $this->escape($this->ogImage) : '';
         $ogType = $this->escape($this->ogType);
+        $schemaScripts = '';
+
+        foreach ($this->schemas as $schema) {
+            $jsonLD = json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            $schemaScripts = <<<HTML
+                <script type="application/ld+json">
+                    {$jsonLD}
+                </script>
+            HTML;
+        }
 
         $extraMeta = '';
 
@@ -86,6 +102,7 @@ class SEOService
             $canonicalHTML
             $ogImageHTML
             $extraMeta
+            $schemaScripts
         HTML;
     }
 }

@@ -22,6 +22,7 @@ class BaseController extends Controller
     protected function render(string $view, array $data = [], string $layout = 'front')
     {
         $data['seo'] = $this->seo;
+        $data['form'] = $this->form;
         $data['content'] = view($view, $data);
 
         return view("layouts/{$layout}", $data);

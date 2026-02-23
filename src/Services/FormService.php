@@ -45,6 +45,7 @@ class FormService
                 $email = Services::email();
 
                 $email->setTo($ownerEmail);
+                $email->setFrom($ownerEmail);
                 $email->setSubject("New submission from {$formName} form");
 
                 // Vista del email
@@ -56,6 +57,45 @@ class FormService
                 $email->setMessage($body);
 
                 $email->send();
+            }
+
+        }
+        
+        // Auto reply to user
+        if (($options['auto_reply'] ?? false) === true) {
+
+            $ownerEmail = $options['owner_email'] ?? env('FORM_OWNER_EMAIL');
+
+            if (isset($cleanData['email']) && filter_var($cleanData['email'], FILTER_VALIDATE_EMAIL) && $ownerEmail) {
+
+                $email = Services::email();
+
+                $email->setFrom($ownerEmail);
+
+                $email->setTo($cleanData['email']);
+                $email->setSubject("We received your message");
+
+                $body = view("emails/{$formName}_auto_reply", [
+                    'data' => $cleanData,
+                    'formName' => $formName
+                ]);
+
+                $email->setMessage($body);
+
+                $email->send();
+            }
+        }
+
+        // Store in database using model
+        if (($options['store'] ?? false) === true) {
+
+            $modelClass = 'App\\Models\\' . ucfirst($formName) . 'SubmissionModel';
+
+            if (class_exists($modelClass)) {
+
+                $model = new $modelClass();
+
+                $model->insert($cleanData);
             }
         }
 

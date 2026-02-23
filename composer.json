@@ -1,0 +1,12 @@
+{
+  "name": "alonsoggdev/landing-core",
+  "description": "Reusable core for SSR landing projects",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "LandingCore\\": "src/"
+    }
+  },
+  "require": {}
+}
